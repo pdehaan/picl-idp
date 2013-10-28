@@ -9,6 +9,7 @@ var uuid = require('uuid')
 var Hapi = require('hapi')
 var error = require('../error')
 var Client = require('../client')
+var SSEStream = require('../ssestream')
 var isA = Hapi.types
 
 module.exports = function (
@@ -21,7 +22,7 @@ module.exports = function (
   var auth = require('./auth')(log, isA, error, models.Account, models.SrpSession, models.AuthBundle)
   var defaults = require('./defaults')(log, P, models.dbs)
   var idp = require('./idp')(log, crypto, error, isA, serverPublicKey, config.bridge)
-  var account = require('./account')(log, crypto, uuid, isA, error, models.Account, models.RecoveryEmail)
+  var account = require('./account')(log, crypto, uuid, isA, error, SSEStream, models.Account, models.RecoveryEmail)
   var password = require('./password')(log, isA, error, models.Account, models.tokens)
   var session = require('./session')(log, isA, error, models.Account, models.tokens)
   var sign = require('./sign')(log, isA, error, signer, models.Account)

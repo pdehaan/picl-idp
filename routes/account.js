@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-module.exports = function (log, crypto, uuid, isA, error, Account, RecoveryEmail) {
+module.exports = function (log, crypto, uuid, isA, error, SSEStream, Account, RecoveryEmail) {
 
   const HEX_STRING = /^(?:[a-fA-F0-9]{2})+$/
 
@@ -152,29 +152,62 @@ module.exports = function (log, crypto, uuid, isA, error, Account, RecoveryEmail
         handler: function (request) {
           log.begin('Account.RecoveryEmailStatus', request)
           var sessionToken = request.auth.credentials
-          Account
-            .get(sessionToken.uid)
-            .done(
-              function (account) {
-                request.reply(
-                  {
-                    email: account.email,
-                    verified: account.verified
+          var accept = request.raw.req.headers.accept;
+          if (accept !== 'text/event-stream') {
+            // Normal request; just return the json response body.
+            Account
+              .get(sessionToken.uid)
+              .done(
+                function (account) {
+                  request.reply(
+                    {
+                      email: account.email,
+                      verified: account.verified
+                    }
+                  )
+                },
+                function (err) {
+                  request.reply(err)
+                }
+              )
+          } else {
+            // SSE request; poll the database until account is verified.
+            // Polling is not awesome, but best we can currently do.
+            stream = new SSEStream(function(cb) {
+              Account
+                .get(sessionToken.uid)
+                .done(
+                  function (account) {
+                    // Stop streaming if the account is verified, or
+                    // if it's been going on for more than 5 minutes.
+                    if (account.verified) {
+                      stream.stop();
+                    }
+                    if ((+new Date()) - stream.lastPollTime > 1000*60*5) {
+                      stream.stop();
+                    }
+                    cb(null, {
+                      email: account.email,
+                      verified: account.verified
+                    })
+                  },
+                  function (err) {
+                    stream.stop();
+                    cb(err);
                   }
                 )
-              },
-              function (err) {
-                request.reply(err)
-              }
-            )
+            });
+            request.reply(stream).type('text/event-stream')
+          }
         },
         validate: {
-          response: {
-            schema: {
-              email: isA.String().required(),
-              verified: isA.Boolean().required()
-            }
-          }
+          // XXX TODO: can't validate with event-stream responses.
+          //response: {
+          //  schema: {
+          //    email: isA.String().required(),
+          //    verified: isA.Boolean().required()
+          //  }
+          //}
         }
       }
     },
