@@ -52,19 +52,19 @@
     "request": "2.31.0"
   },
   "devDependencies": {
+    "ass": "0.0.4",
     "awsbox": "0.6.2",
     "awsboxen": "0.5.2",
+    "binary-split": "0.1.1",
+    "grunt": "0.4.2",
+    "grunt-contrib-jshint": "0.8.0",
+    "grunt-copyright": "0.1.0",
+    "grunt-jsonlint": "1.0.4",
     "hawk": "2.1.0",
     "lazysmtp": "git://github.com/dannycoates/node-lazysmtp.git#9bb3712992",
     "mailparser": "0.4.0",
-    "tap": "0.4.8",
-    "grunt-contrib-jshint": "~0.8.0",
-    "load-grunt-tasks": "~0.2.0",
-    "grunt": "~0.4.2",
-    "ass": "0.0.4",
     "sjcl": "1.0.0",
-    "binary-split": "0.1.1",
-    "through": "2.3.4",
-    "grunt-copyright": "~0.1.0"
+    "tap": "0.4.8",
+    "through": "2.3.4"
   }
 }

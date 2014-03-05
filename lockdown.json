@@ -8,6 +8,9 @@
   "JSONSelect": {
     "0.4.0": "a08edcc67eb3fcbe99ed630855344a0cf282bb8d"
   },
+  "JSV": {
+    "4.0.2": "d077f6825571f82132f9dffaed587b4029feff57"
+  },
   "abbrev": {
     "1.0.4": "bd55ae5e413ba1722ee4caba1f6ea10414a59ecd"
   },
@@ -313,6 +316,9 @@
   "grunt-copyright": {
     "0.1.0": "6ed307c191da5acf795e665ed37966e74550dbdf"
   },
+  "grunt-jsonlint": {
+    "1.0.4": "b6631a29de7b7abbcfd843517aa5f559e3a16f70"
+  },
   "handlebars": {
     "1.3.0": "9e9b130a93e389491322d975cf3ec1818c37ce34"
   },
@@ -389,6 +395,9 @@
   "json-stringify-safe": {
     "5.0.0": "4c1f228b5050837eba9d21f50c2e6e320624566e"
   },
+  "jsonlint": {
+    "1.6.0": "88aa46bc289a7ac93bb46cae2d58a187a9bb494a"
+  },
   "jsxgettext": {
     "0.3.3": "4580074361f9f0c665790b073042c8b0b927dde7"
   },
@@ -399,7 +408,7 @@
     "0.1.0": "4a3188d4291b66b4f65edb99f806aa9ae293592a"
   },
   "lazysmtp": {
-    "0.0.8": "*"
+    "0.0.8": "8fdb8195b8113033cfc2e1087519e52ce783c8c9"
   },
   "load-grunt-tasks": {
     "0.2.1": "19df82abb7fab7ec70ecc5222ce7a301a843dace"
@@ -470,7 +479,8 @@
     "0.6.0": "230620f83b0186305ce1970db656838e04ec30df"
   },
   "nomnom": {
-    "1.5.2": "f4345448a853cfbd5c0d26320f2477ab0526fe2f"
+    "1.5.2": "f4345448a853cfbd5c0d26320f2477ab0526fe2f",
+    "1.6.2": "84a66a260174408fc5b77a18f888eccc44fb6971"
   },
   "nopt": {
     "1.0.10": "6ddd21bd2a31417b92727dd585f8a6f37608ebee",

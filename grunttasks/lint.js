@@ -2,10 +2,13 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-module.exports = function (grunt) {
-  grunt.initConfig({
-    'pkg': grunt.file.readJSON('package.json')
-  });
+// meta grunt task to run other linters.
 
-  grunt.loadTasks('grunttasks');
+module.exports = function (grunt) {
+  'use strict';
+
+  grunt.registerTask('lint', [
+    'jshint',
+    'jsonlint'
+  ]);
 };
