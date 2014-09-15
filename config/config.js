@@ -29,6 +29,9 @@ module.exports = function (fs, path, url, convict) {
     publicKeyFile: {
       default: path.resolve(__dirname, '../config/public-key.json')
     },
+    trustedJKUs: {
+      default: []
+    },
     db: {
       backend: {
         default: "httpdb",
@@ -185,12 +188,12 @@ module.exports = function (fs, path, url, convict) {
       bounceQueueUrl: {
         doc: 'The bounce queue URL to use (should include https://sqs.<region>.amazonaws.com/<account-id>/<queue-name>)',
         format: String,
-        default: '',
+        default: ''
       },
       complaintQueueUrl: {
         doc: 'The complaint queue URL to use (should include https://sqs.<region>.amazonaws.com/<account-id>/<queue-name>)',
         format: String,
-        default: '',
+        default: ''
       }
     },
     useHttps: {
@@ -204,7 +207,7 @@ module.exports = function (fs, path, url, convict) {
     certPath: {
       doc: "path to SSL certificate in PEM format if serving over https",
       default: path.resolve(__dirname, '../cert.pem')
-    },
+    }
   })
 
   // handle configuration files.  you can specify a CSV list of configuration

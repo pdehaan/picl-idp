@@ -4,6 +4,7 @@
 
 var validators = require('./validators')
 var HEX_STRING = validators.HEX_STRING
+var BASE64_JWT = validators.BASE64_JWT
 
 var Password = require('../crypto/password')
 var butil = require('../crypto/butil')
@@ -22,7 +23,8 @@ module.exports = function (
   isProduction,
   domain,
   resendBlackoutPeriod,
-  customs
+  customs,
+  isPreVerified
   ) {
 
   var routes = [
@@ -36,7 +38,9 @@ module.exports = function (
             authPW: isA.string().min(64).max(64).regex(HEX_STRING).required(),
             preVerified: isA.boolean(),
             service: isA.string().max(16).alphanum().optional(),
-            redirectTo: validators.redirectTo(redirectDomain).optional()
+            redirectTo: validators.redirectTo(redirectDomain).optional(),
+            resume: isA.string().max(2048).optional(),
+            preVerifyToken: isA.string().max(2048).regex(BASE64_JWT).optional()
           }
         }
       },
@@ -66,8 +70,9 @@ module.exports = function (
               if (err.errno !== 102) { throw err }
             }
           )
+          .then(isPreVerified.bind(null, form.email, form.preVerifyToken))
           .then(
-            function () {
+            function (preverified) {
               var password = new Password(authPW, authSalt, verifierVersion)
               return password.verifyHash()
               .then(
@@ -78,7 +83,7 @@ module.exports = function (
                       createdAt: Date.now(),
                       email: email,
                       emailCode: crypto.randomBytes(16),
-                      emailVerified: form.preVerified || false,
+                      emailVerified: form.preVerified || preverified,
                       kA: crypto.randomBytes(32),
                       wrapWrapKb: crypto.randomBytes(32),
                       devices: {},
@@ -146,6 +151,7 @@ module.exports = function (
                 mailer.sendVerifyCode(response.account, response.account.emailCode, {
                   service: form.service,
                   redirectTo: form.redirectTo,
+                  resume: form.resume,
                   acceptLanguage: request.app.acceptLanguage
                 })
                 .fail(
@@ -183,7 +189,7 @@ module.exports = function (
           payload: {
             email: validators.email().required(),
             authPW: isA.string().min(64).max(64).regex(HEX_STRING).required()
-          },
+          }
         },
         response: {
           schema: {
@@ -419,7 +425,8 @@ module.exports = function (
         validate: {
           payload: {
             service: isA.string().max(16).alphanum().optional(),
-            redirectTo: validators.redirectTo(redirectDomain).optional()
+            redirectTo: validators.redirectTo(redirectDomain).optional(),
+            resume: isA.string().max(2048).optional()
           }
         }
       },
@@ -443,6 +450,7 @@ module.exports = function (
               {
                 service: request.payload.service,
                 redirectTo: request.payload.redirectTo,
+                resume: request.payload.resume,
                 acceptLanguage: request.app.acceptLanguage
               }
             )
@@ -519,6 +527,16 @@ module.exports = function (
                   verifierVersion: password.version
                 }
               )
+            }
+          )
+          .then(
+            function () {
+              return db.account(accountResetToken.uid)
+            }
+          )
+          .then(
+            function (accountRecord) {
+              return customs.reset(accountRecord.email)
             }
           )
           .then(

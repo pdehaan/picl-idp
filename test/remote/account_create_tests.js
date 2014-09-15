@@ -82,14 +82,14 @@ TestServer.start(config)
     }
   )
 
-/*/ TODO: revisit after the "dumb" resend logic is updated
+
   test(
-    'create account with service identifier',
+    'create account with service identifier and resume',
     function (t) {
       var email = server.uniqueEmail()
       var password = 'allyourbasearebelongtous'
       var client = null
-      var options = { service: 'abcdef' }
+      var options = { service: 'abcdef', resume: 'foo' }
       return Client.create(config.publicUrl, email, password, options)
         .then(
           function (x) {
@@ -104,35 +104,12 @@ TestServer.start(config)
         .then(
           function (emailData) {
             t.equal(emailData.headers['x-service-id'], 'abcdef')
-            client.options.service = '123456'
-            return client.requestVerifyEmail()
-          }
-        )
-        .then(
-          function () {
-            return server.mailbox.waitForEmail(email)
-          }
-        )
-        .then(
-          function (emailData) {
-            t.equal(emailData.headers['x-service-id'], '123456')
-            client.options.service = null
-            return client.requestVerifyEmail()
-          }
-        )
-        .then(
-          function () {
-            return server.mailbox.waitForEmail(email)
-          }
-        )
-        .then(
-          function (emailData) {
-            t.equal(emailData.headers['x-service-id'], undefined)
+            t.ok(emailData.headers['x-link'].indexOf('resume=foo') > -1)
           }
         )
     }
   )
-/*/
+
   test(
     'create account allows localization of emails',
     function (t) {
@@ -280,7 +257,7 @@ TestServer.start(config)
         'me@example.com-',
         'me@example..com',
         'me@example-.com',
-        'me@example.-com',
+        'me@example.-com'
       ]
       emails.forEach(function(email, i) {
         emails[i] = Client.create(config.publicUrl, email, pwd)
@@ -306,7 +283,7 @@ TestServer.start(config)
         'a+b+c@example.com',
         '#!?-@t-e-s-t.c-o-m',
         String.fromCharCode(1234) + '@example.com',
-        'test@' + String.fromCharCode(5678) + '.com',
+        'test@' + String.fromCharCode(5678) + '.com'
       ]
 
       emails.forEach(function(email, i) {
@@ -335,7 +312,7 @@ TestServer.start(config)
       return Client.createAndVerify(config.publicUrl, email, password, server.mailbox)
         .then(
           function (c) {
-            return Client.create(config.publicUrl, email2, password, server.mailbox)
+            return Client.create(config.publicUrl, email2, password)
           }
         )
         .then(
@@ -353,7 +330,7 @@ TestServer.start(config)
     function (t) {
       var email = server.uniqueEmail()
       var password = 'abcdef'
-      return Client.create(config.publicUrl, email, password, server.mailbox)
+      return Client.create(config.publicUrl, email, password)
         .then(
           function () {
             // delete the first verification email

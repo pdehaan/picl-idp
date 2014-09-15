@@ -100,7 +100,9 @@ ClientApi.prototype.accountCreate = function (email, authPW, options) {
       authPW: authPW.toString('hex'),
       preVerified: options.preVerified || undefined,
       service: options.service || undefined,
-      redirectTo: options.redirectTo || undefined
+      redirectTo: options.redirectTo || undefined,
+      resume: options.resume || undefined,
+      preVerifyToken: options.preVerifyToken || undefined
     },
     {
       'accept-language': options.lang
@@ -226,7 +228,8 @@ ClientApi.prototype.recoveryEmailResendCode = function (sessionTokenHex, options
           token,
           {
             service: options.service || undefined,
-            redirectTo: options.redirectTo || undefined
+            redirectTo: options.redirectTo || undefined,
+            resume: options.resume || undefined
           }
         )
       }.bind(this)
@@ -311,7 +314,8 @@ ClientApi.prototype.passwordForgotSendCode = function (email, options) {
     {
       email: email,
       service: options.service || undefined,
-      redirectTo: options.redirectTo || undefined
+      redirectTo: options.redirectTo || undefined,
+      resume: options.resume || undefined
     }
   )
 }
@@ -328,7 +332,8 @@ ClientApi.prototype.passwordForgotResendCode = function (passwordForgotTokenHex,
           {
             email: email,
             service: options.service || undefined,
-            redirectTo: options.redirectTo || undefined
+            redirectTo: options.redirectTo || undefined,
+            resume: options.resume || undefined
           }
         )
       }.bind(this)
