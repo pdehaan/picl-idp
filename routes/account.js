@@ -53,7 +53,6 @@ module.exports = function (
         var locale = request.app.acceptLanguage
         customs.check(
           request.app.clientAddress,
-          request.headers['user-agent'],
           email,
           'accountCreate'
           )
@@ -98,6 +97,9 @@ module.exports = function (
                   )
                   .then(
                     function (account) {
+                      if (account.emailVerified) {
+                        log.event('verified', { email: account.email, uid: account.uid, locale: account.locale })
+                      }
                       return db.createSessionToken(
                         {
                           uid: account.uid,
@@ -208,7 +210,6 @@ module.exports = function (
         var authPW = Buffer(form.authPW, 'hex')
         customs.check(
           request.app.clientAddress,
-          request.headers['user-agent'],
           email,
           'accountLogin')
           .then(db.emailRecord.bind(db, email))
@@ -439,7 +440,6 @@ module.exports = function (
         }
         customs.check(
           request.app.clientAddress,
-          request.headers['user-agent'],
           sessionToken.email,
           'recoveryEmailResendCode')
           .then(
@@ -484,6 +484,7 @@ module.exports = function (
               if (!butil.buffersAreEqual(code, account.emailCode)) {
                 throw error.invalidVerificationCode()
               }
+              log.event('verified', { email: account.email, uid: account.uid, locale: account.locale })
               return db.verifyEmail(account)
             }
           )
