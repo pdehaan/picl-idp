@@ -31,4 +31,4 @@ before_install:
 script:
   - npm config set spin false
   - npm test
-  - grunt validate-shrinkwrap
+  - grunt validate-shrinkwrap --force
