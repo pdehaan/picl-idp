@@ -7,14 +7,19 @@ var path = require('path')
 var test = require('../ptaptest')
 var TestServer = require('../test_server')
 var Client = require('../client')
-var jwcrypto = require('jwcrypto')
-require('jwcrypto/lib/algs/rs')
-var b64 = require('jwcrypto/lib/utils').base64urlencode
+var bidcrypto = require('browserid-crypto')
+require('browserid-crypto/lib/algs/rs')
+var hex2b64urlencode = require('browserid-crypto/lib/utils').hex2b64urlencode
+var b64 = require('browserid-crypto/lib/utils').base64urlencode
 
 process.env.CONFIG_FILES = path.join(__dirname, '../config/preverify_secret.json')
 var config = require('../../config').root()
-var secretKey = jwcrypto.loadSecretKey(fs.readFileSync(config.secretKeyFile))
+var secretKey = bidcrypto.loadSecretKey(fs.readFileSync(config.secretKeyFile))
 function fail() { throw new Error('call succeeded when it should have failed')}
+
+function nowSeconds() {
+  return Math.floor(Date.now() / 1000)
+}
 
 TestServer.start(config)
 .then(function main(server) {
@@ -33,13 +38,13 @@ TestServer.start(config)
       ))
       var payload = b64(JSON.stringify(
         {
-          exp: Date.now() + 10000,
+          exp: nowSeconds() + 10,
           aud: config.domain,
           sub: email
         }
       ))
       var sig = secretKey.sign(header + '.' + payload)
-      var token = header + '.' + payload + '.' + sig
+      var token = header + '.' + payload + '.' + hex2b64urlencode(sig)
       return Client.create(config.publicUrl, email, password, { preVerifyToken: token })
         .then(
           function (c) {
@@ -69,13 +74,13 @@ TestServer.start(config)
       ))
       var payload = b64(JSON.stringify(
         {
-          exp: Date.now() + 10000,
+          exp: nowSeconds() + 10,
           aud: config.domain,
           sub: 'wrong@example.com'
         }
       ))
       var sig = secretKey.sign(header + '.' + payload)
-      var token = header + '.' + payload + '.' + sig
+      var token = header + '.' + payload + '.' + hex2b64urlencode(sig)
       return Client.create(config.publicUrl, email, password, { preVerifyToken: token })
         .then(
           fail,
@@ -109,13 +114,13 @@ TestServer.start(config)
             ))
             var payload = b64(JSON.stringify(
               {
-                exp: Date.now() + 10000,
+                exp: nowSeconds() + 10,
                 aud: config.domain,
                 sub: email
               }
             ))
             var sig = secretKey.sign(header + '.' + payload)
-            var token = header + '.' + payload + '.' + sig
+            var token = header + '.' + payload + '.' + hex2b64urlencode(sig)
             return Client.create(config.publicUrl, email, password, { preVerifyToken: token })
           }
         )

@@ -492,6 +492,7 @@ Successful requests will produce a "200 OK" response with empty JSON body:
 Failing requests may be due to the following errors:
 
 * status code 400, errno 102:  attempt to access an account that does not exist
+* status code 400, errno 103:  incorrect password
 * status code 400, errno 106:  request body was not valid json
 * status code 401, errno 109:  invalid request signature
 * status code 401, errno 110:  invalid authentication token
@@ -526,10 +527,12 @@ https://api-accounts.dev.lcip.org/v1/session/status \
 
 ### Response
 
-Successful requests will produce a "200 OK" response with an empty JSON body object:
+Successful requests will produce a "200 OK" response with the account uid in the JSON body object:
 
 ```json
-{}
+{
+  "uid": "80dc2f2e373b4b3bb992468e6d578cd2"
+}
 ```
 
 Failing requests may be due to the following errors:
@@ -727,7 +730,7 @@ This request will fail unless the account's email address has been verified.
 
 ___Parameters___
 
-* publicKey - the key to sign (run `bin/generate-keypair` from [jwcrypto](https://github.com/mozilla/jwcrypto))
+* publicKey - the key to sign (run `bin/generate-keypair` from [browserid-crypto](https://github.com/mozilla/browserid-crypto))
     * algorithm - "RS" or "DS"
     * n - RS only
     * e - RS only

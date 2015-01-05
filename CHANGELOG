@@ -1,3 +1,21 @@
+train-27
+  * updated fxa-auth-mailer for mail template changes
+  * added locale to basket api response logging
+
+train-26
+  * no changes
+
+train-25
+  * no changes
+
+train-24
+  * added uid to /session/status #830
+  * updated dependencies
+
+train-23
+  * improved operational affordances for scrypt max-pending limit #819
+  * Fixed JWT related bugs for preVerifyToken #824 #825
+
 train-22
   * basket API #818
 
