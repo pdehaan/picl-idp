@@ -1,3 +1,16 @@
+train-30
+  * Add more fine-grained logging on basket API errors - #839, #856
+  * Increase passwordForgotToken lifetime to 60mins - #862, #845
+  * Tell basket that locale="en-US" when the user doesn't provide one explicitly - #863
+  * Use shiny new PyFxA library for the python loadtests - #844
+
+train-29
+  * increased basket logging #857
+  * deleted unused code #847
+
+train-28
+  * updated hapi to 7.5.3
+
 train-27
   * updated fxa-auth-mailer for mail template changes
   * added locale to basket api response logging
